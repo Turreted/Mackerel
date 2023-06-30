@@ -20,9 +20,11 @@ INC_DIRS := $(shell find $(SRC_DIRS) -type d)
 # Add a prefix to INC_DIRS. So moduleA would become -ImoduleA. GCC understands this -I flag
 INC_FLAGS := $(addprefix -I,$(INC_DIRS))
 
+CFLAGS = -std=c99 -Wall -O3
+
 # The linker, which is the final build step
 $(BUILD_DIR)/$(TARGET_EXEC): $(OBJS)
-	$(CXX) $(OBJS) -o $@ $(LDFLAGS)
+	$(CC) $(OBJS) -o $@ $(LDFLAGS)
 
 # Build step, compiles c to object files
 $(BUILD_DIR)/%.c.o: %.c
