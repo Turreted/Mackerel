@@ -56,3 +56,11 @@ int starts_with(const char *str, const char *prefix) {
 double now() {
     return (double)clock() / CLOCKS_PER_SEC;
 }
+
+int max(int a, int b) {
+    return (a > b) ? a : b;
+}
+
+int min(int a, int b) {
+    return (a < b) ? a : b;
+}

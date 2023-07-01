@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 #include "board.h"
 
 void board_clear(Board *board) {
@@ -329,6 +330,21 @@ void board_load_fen(Board *board, char *fen) {
         }
     }
     i++;
+}
+
+u_int8_t extract_pos_from_bb(int r, int c, bb bitboard) {
+    return (bitboard >> ((r * 8) + (8 - c))) & 0x01;
+}
+
+char *board_to_fen(Board *board) {
+    char* fen = malloc(sizeof(char) * 128);
+
+    for (int ptr = 0; ptr < 64; ptr++) {
+        char cur_char = '\0';
+    }
+
+    extract_pos_from_bb(0, 0, board->black);
+    return fen;
 }
 
 const int POSITION_WHITE_PAWN[64] = {

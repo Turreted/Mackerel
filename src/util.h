@@ -8,4 +8,7 @@ char *strip(char *str);
 int starts_with(const char *str, const char *prefix);
 double now();
 
+int min(int, int);
+int max(int, int);
+
 #endif
