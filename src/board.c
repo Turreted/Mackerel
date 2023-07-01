@@ -399,17 +399,12 @@ char *board_to_fen(Board *board) {
             blank_counter = 0;
             ptr++; 
         }
-
         fen[ptr] = '/';
         ptr++;
     }
 
-    // overwrite
-    printf("ptr size: %d\n", ptr);
     ptr--;
     fen[ptr] = '\0';
-    printf("value of fen: %s, len: %lu\n", fen, strlen(fen));
-    printf("Can castle %d, \n", board->castle);
     char castle_str[5];
     ptr = 0;
 
@@ -431,11 +426,10 @@ char *board_to_fen(Board *board) {
     }
     ptr++;
     castle_str[ptr] = '\0';
-    char color = board->color ? 'b' : 'w';
+    char color = board->color == WHITE ? 'w' : 'b';
     
     char* full_fen = (char*) malloc(sizeof(char) * 128);
     sprintf(full_fen, "%s %c %s", fen, color, castle_str);
-    printf("%s", full_fen);
 
     return full_fen;
 }

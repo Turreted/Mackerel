@@ -5,8 +5,8 @@
 
 // evaulation function to determine who is better at this position
 int eval_board(Board *board) {
-
-    return board->white_material - board->black_material;
+    signed int perspective = board->color == WHITE ? -1 : 1;
+    return perspective * ( board->black_material - board->white_material );
 }
 
 void print_legal_moves(Board *board) {
@@ -18,4 +18,5 @@ void print_legal_moves(Board *board) {
         print_move(board, move);
         printf(", ");
     }
+    printf("\n");
 }

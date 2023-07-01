@@ -10,18 +10,26 @@
 
 static Board board;
 static Undo undo;
-//static Search search;
+static Search search;
 
 int main() {
     bb_init();
-    char *fen = "rnbqkbnr/pRRRRRRp/8/1RRRRRR1/1RRR3R/5R2/PPP1PRPP/1N4N1 w - - 0 1";
+    char *fen = "8/8/2q1k3/8/8/8/2N5/5K2 b - - 0 1";
     board_load_fen(&board, fen);
 
     Move moves[MAX_MOVES];
-    srand(time(NULL)); 
 
-    int move_count = gen_moves(&board, moves);
+    int depth = 3;
+    search.depth = depth;
 
+    int move_count = gen_legal_moves(&board, moves);
+    int score = dfs(&search, &board, depth);
+    char str[64];
+    move_to_string(&(search.move), str);
+
+    printf("Best move: %s with score %d\n", str,score);
+    
+    print_legal_moves(&board);
     board_print(&board);
     board_to_fen(&board);
 }
