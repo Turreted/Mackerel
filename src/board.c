@@ -332,19 +332,112 @@ void board_load_fen(Board *board, char *fen) {
     i++;
 }
 
-u_int8_t extract_pos_from_bb(int r, int c, bb bitboard) {
-    return (bitboard >> ((r * 8) + (8 - c))) & 0x01;
+// extract the bit at position x, y from the bitboard, indexed fromt the to left
+char extract_pos_from_bb(int r, int c, bb bitboard) {
+    if (!(0 <= r && r < 8) || !(0 <= c && c < 8)) return -1;
+    return (bitboard << ((r*8) + (7-c)) >> 63 & 0x1) ? 1 : 0;
+}
+
+void print_bb(bb bitboard) {
+    for (int r = 0; r < 8; r++) {
+        for (int c = 0; c < 8; c++)
+            printf("%d", extract_pos_from_bb(r, c, bitboard));
+        printf("\n");
+    }
 }
 
 char *board_to_fen(Board *board) {
-    char* fen = malloc(sizeof(char) * 128);
+    char fen[80];
+    char ascii_zero = 48;
 
-    for (int ptr = 0; ptr < 64; ptr++) {
-        char cur_char = '\0';
+    int ptr = 0;
+    for (int r = 0; r < 8; r++) {
+        char blank_counter = 0;
+        for (int c = 0; c < 8; c++) {
+
+            if ((extract_pos_from_bb(r, c, board->black) 
+                || extract_pos_from_bb(r, c, board->white)) 
+                && blank_counter != 0) {
+                    fen[ptr] = blank_counter + ascii_zero;
+                    blank_counter = 0;
+                    ptr++;
+            }
+            
+            if (extract_pos_from_bb(r, c, board->black_kings)) {
+                fen[ptr] = 'k';
+            } else if (extract_pos_from_bb(r, c, board->black_queens)) {
+                fen[ptr] = 'q';
+            } else if (extract_pos_from_bb(r, c, board->black_bishops)) {
+                fen[ptr] = 'b';
+            } else if (extract_pos_from_bb(r, c, board->black_knights)) {
+                fen[ptr] = 'n';
+            } else if (extract_pos_from_bb(r, c, board->black_pawns)) {
+                fen[ptr] = 'p';
+            } else if (extract_pos_from_bb(r, c, board->black_rooks)) {
+                fen[ptr] = 'r';
+            } else if (extract_pos_from_bb(r, c, board->white_kings)) {
+                fen[ptr] = 'K';
+            } else if (extract_pos_from_bb(r, c, board->white_queens)) {
+                fen[ptr] = 'Q';
+            } else if (extract_pos_from_bb(r, c, board->white_bishops)) {
+                fen[ptr] = 'B';
+            } else if (extract_pos_from_bb(r, c, board->white_knights)) {
+                fen[ptr] = 'N';
+            } else if (extract_pos_from_bb(r, c, board->white_pawns)) {
+                fen[ptr] = 'P';
+            } else if (extract_pos_from_bb(r, c, board->white_rooks)) {
+                fen[ptr] = 'R';
+            } else {
+                blank_counter++;
+                ptr--;
+            }
+            ptr++;
+        }
+        // end of col, place blank padding
+        if (blank_counter != 0) {
+            fen[ptr] = ascii_zero + blank_counter;
+            blank_counter = 0;
+            ptr++; 
+        }
+
+        fen[ptr] = '/';
+        ptr++;
     }
 
-    extract_pos_from_bb(0, 0, board->black);
-    return fen;
+    // overwrite
+    printf("ptr size: %d\n", ptr);
+    ptr--;
+    fen[ptr] = '\0';
+    printf("value of fen: %s, len: %lu\n", fen, strlen(fen));
+    printf("Can castle %d, \n", board->castle);
+    char castle_str[5];
+    ptr = 0;
+
+    if (board->castle & CASTLE_WHITE_KING) {
+        castle_str[ptr] = 'K';
+        ptr++;
+    } if (board->castle & CASTLE_WHITE_QUEEN) {
+        castle_str[ptr] = 'Q';
+        ptr++;
+    } if (board->castle & CASTLE_BLACK_KING) {
+       castle_str[ptr] = 'k'; 
+       ptr++;
+    } if (board->castle & CASTLE_BLACK_QUEEN) {
+       castle_str[ptr] = 'q'; 
+       ptr++;
+    } if (ptr == 0) {
+        strcpy(castle_str, "- -");
+        ptr += 4;
+    }
+    ptr++;
+    castle_str[ptr] = '\0';
+    char color = board->color ? 'b' : 'w';
+    
+    char* full_fen = (char*) malloc(sizeof(char) * 128);
+    sprintf(full_fen, "%s %c %s", fen, color, castle_str);
+    printf("%s", full_fen);
+
+    return full_fen;
 }
 
 const int POSITION_WHITE_PAWN[64] = {

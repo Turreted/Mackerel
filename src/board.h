@@ -92,5 +92,7 @@ void board_reset(Board *board);
 void board_set(Board *board, int sq, int piece);
 void board_print(Board *board);
 void board_load_fen(Board *board, char *fen);
+char *board_to_fen(Board *board);
+void print_bb(bb bitboard);
 
 #endif
