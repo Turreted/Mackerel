@@ -9,6 +9,13 @@
 #include "eval.h"
 #include "util.h"
 
+#define INF 2147483647
+
+int dfs_helper(Search *search, Board *board, int depth) {
+    search->depth = depth;
+    int perspective = board->color == WHITE ? 1 : -1;
+    return perspective * dfs(search, board, depth);
+}
 
 int dfs(Search *search, Board *board, int depth) {
     Move moves[MAX_MOVES];
@@ -17,7 +24,7 @@ int dfs(Search *search, Board *board, int depth) {
 
     // illegal move or checkmate is negative infinity
     if (is_illegal(board) || move_count == 0) {
-        return -10000000;
+        return -INF;
     }
 
     // at the bottom of the tree return the raw board score
@@ -26,7 +33,7 @@ int dfs(Search *search, Board *board, int depth) {
         return eval_board(board);
     }
 
-    int best_layer_score = -1000000;
+    int best_layer_score = -INF;
     for (int i = 0; i < move_count; i++) {
         Move *move = &moves[i];
 
@@ -34,9 +41,6 @@ int dfs(Search *search, Board *board, int depth) {
         do_move(board, move, &undo);
 
         int move_score = -dfs(search, board, depth - 1);
-        char move_str[64];
-        move_to_string(move, move_str);
-        //printf("move: %s, score: %d \n", move_str, move_score);
 
         if (move_score > best_layer_score) {
             best_layer_score = move_score;

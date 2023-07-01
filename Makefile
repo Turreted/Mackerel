@@ -1,4 +1,6 @@
 # Job Vranish (https://spin.atomicobject.com/2016/08/26/makefile-c-projects/)
+MAKEFLAGS += --silent
+
 TARGET_EXEC := main
 BUILD_DIR := ./build
 SRC_DIRS := ./src

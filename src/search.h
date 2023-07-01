@@ -10,6 +10,7 @@ typedef struct {
     Move move;
 } Search;
 
+int dfs_helper(Search *search, Board *board, int depth);
 int dfs(Search *search, Board *board, int depth);
 
 #endif
