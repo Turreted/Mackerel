@@ -15,10 +15,10 @@ static Search search;
 
 int run_game() {
     bb_init();
-    char *fen = "4k3/7R/8/8/R7/8/8/4K3 w - - 0 1";
+    char *fen = "r3k2r/p1ppqpb1/Bn3np1/3PN3/1p2P3/2N2Q2/PPPB1PpP/R3K2R w - - 0 1";
     board_load_fen(&board, fen);
 
-    int depth = 4;
+    int depth = 6;
     search.depth = depth;
 
     // perform search
@@ -31,7 +31,6 @@ int run_game() {
     double time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
 
     printf("Found best move %s with score %d in %fs\n", move_str, search.score, time_spent);    
-    
     
     board_print(&board);
     board_print_fen(&board);
@@ -46,13 +45,17 @@ int run_game() {
     return 0;
 }
 
-int main() {
+void test_sorting() {
     bb_init();
     char *fen = "4k3/1p6/8/8/R7/8/8/4K3 w - - 0 1";
     board_load_fen(&board, fen);
 
     Move moves[MAX_MOVES];
     gen_sorted_moves(&board, moves);
+}
+
+int main() {
+    run_game();
 }
 
 

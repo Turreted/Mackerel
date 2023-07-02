@@ -15,7 +15,7 @@ int eval_board(Board *board) {
     return perspective * ( board->black_material - board->white_material );
 }
 
-// compares move scores so we can sort the list. Sort from greatest to least.
+// compares move scores so we can sort the list. Compares from greatest to least.
 int comp_moves(const void * a, const void * b) {
     MoveScore *x = (MoveScore *) a;
     MoveScore *y = (MoveScore *) b;

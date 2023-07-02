@@ -20,7 +20,7 @@ int minmax(Search *search, Board *board, int depth) {
 int minmax_dfs(Search *search, Board *board, int depth, int alpha, int beta) {
     Move moves[MAX_MOVES];
     Undo undo;
-    int move_count = gen_legal_moves(board, moves);
+    int move_count = gen_sorted_moves(board, moves);
 
     // If there is an illegal move kill the program
     if (is_illegal(board)) {
