@@ -52,6 +52,7 @@ int gen_legal_moves(Board *board, Move *moves);
 int gen_attacks(Board *board, Move *moves);
 int gen_checks(Board *board, Move *moves);
 int is_check(Board *board);
+int is_checkmate(Board *board);
 int is_illegal(Board *board);
 int has_legal_moves(Board *board);
 

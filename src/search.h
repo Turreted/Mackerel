@@ -10,7 +10,7 @@ typedef struct {
     Move move;
 } Search;
 
-int dfs_helper(Search *search, Board *board, int depth);
-int dfs(Search *search, Board *board, int depth, int alpha, int beta);
+int minmax(Search *search, Board *board, int depth);
+int minmax_dfs(Search *search, Board *board, int depth, int alpha, int beta);
 
 #endif

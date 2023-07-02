@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include <math.h>
+#include <stdlib.h>
 
 #include "search.h"
 
@@ -9,24 +9,33 @@
 #include "eval.h"
 #include "util.h"
 
-#define INF 2147483647
+#define INF 2147483640
 
-int dfs_helper(Search *search, Board *board, int depth) {
+int minmax(Search *search, Board *board, int depth) {
     search->depth = depth;
     int perspective = board->color == WHITE ? 1 : -1;
-    return perspective * dfs(search, board, depth, -INF, INF);
+    return perspective * minmax_dfs(search, board, depth, -INF, INF);
 }
 
-int dfs(Search *search, Board *board, int depth, int alpha, int beta) {
+int minmax_dfs(Search *search, Board *board, int depth, int alpha, int beta) {
     Move moves[MAX_MOVES];
     Undo undo;
     int move_count = gen_legal_moves(board, moves);
 
-    // illegal move or checkmate is negative infinity
-    /*
-    if (is_illegal(board) || move_count == 0) {
+    // If there is an illegal move kill the program
+    if (is_illegal(board)) {
+      printf("Illegal board state reached!");
+      exit(1);
+    }
+
+    // check if checkmate or stalemate
+    if (move_count == 0) {
+      if (is_check(board)) {
         return -INF;
-    }*/
+      } else {
+        return 0;
+      }
+    }
 
     // at the bottom of the tree return the raw board score
     if (depth == 0) {
@@ -34,33 +43,32 @@ int dfs(Search *search, Board *board, int depth, int alpha, int beta) {
     }
 
     for (int i = 0; i < move_count; i++) {
-        printf("alpha %d, beta: %d, depth: %d\n", alpha, beta, search->depth - depth);
+        // printf("alpha %d, beta: %d, depth: %d\n", alpha, beta, search->depth - depth);
         Move *move = &moves[i];
 
-        // compute dfs from moved board
         do_move(board, move, &undo);
 
-        // note that we flip the parity of the returned value because we want 
-        // the opposite of the other player
-        // we also flip the alpha and beta inputs for the same reason, 
-        // our worst position becomes our best, and uor best becomes our worst
-        int evaluation = -dfs(search, board, depth - 1, -beta, -alpha);
-        undo_move(board, move, &undo); 
+        // run dfs with the output value flipped, as each player wants the 
+        // opposite results also flip the alpha and beta parameters, as the 
+        // best play and worst plays are flipped
+        int evaluation = -minmax_dfs(search, board, depth-1, -beta, -alpha);
+        undo_move(board, move, &undo);
 
-        // exclude the rest of the search tree if this is better
-        // than a previous best, as the opponent would not play it
-        if (evaluation >= beta) {
-          return beta;
-        }
-
-        // overwrite best score if current is better and we are at the top of
-        // the search tree
+        // overwrite alpha value with our best score, write current move
+        // to return value if we are at the top of our search tree
         if (evaluation > alpha && search->depth == depth) {
           search->move = *move;
+          search->score = evaluation;
         }
 
         // overwrite alpha score if current is better
         alpha = max(alpha, evaluation);
+        
+        // previous move was too good, which means that this position will
+        // never be reached (https://raphsilva.github.io/utilities/minimax_simulator/
+        if (evaluation >= beta) {
+          return beta; // *snip*
+        }
     }
 
     return alpha;
