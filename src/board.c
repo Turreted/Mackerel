@@ -217,6 +217,13 @@ void board_set(Board *board, int sq, int piece) {
     }
 }
 
+
+void board_print_fen(Board *board) {
+    char* fen = board_to_fen(board);
+    printf("%s \n", fen);
+    free(fen);
+}
+
 void board_print(Board *board) {
     for (int rank = 7; rank >= 0; rank--) {
         for (int file = 0; file < 8; file++) {
