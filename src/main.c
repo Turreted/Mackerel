@@ -13,9 +13,9 @@ static Undo undo;
 static Search search;
 
 
-int main() {
+int run_game() {
     bb_init();
-    char *fen = "r3k2r/p1ppqpb1/Bn3np1/3PN3/1p2P3/2N2Q2/PPPB1PpP/R3K2R w - - 0 1";
+    char *fen = "4k3/7R/8/8/R7/8/8/4K3 w - - 0 1";
     board_load_fen(&board, fen);
 
     int depth = 4;
@@ -45,3 +45,16 @@ int main() {
 
     return 0;
 }
+
+int main() {
+    bb_init();
+    char *fen = "4k3/1p6/8/8/R7/8/8/4K3 w - - 0 1";
+    board_load_fen(&board, fen);
+
+    Move moves[MAX_MOVES];
+    gen_sorted_moves(&board, moves);
+}
+
+
+
+

@@ -9,7 +9,7 @@
 #include "eval.h"
 #include "util.h"
 
-#define INF 2147483640
+#define INF 2147483646
 
 int minmax(Search *search, Board *board, int depth) {
     search->depth = depth;

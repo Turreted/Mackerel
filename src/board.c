@@ -217,7 +217,6 @@ void board_set(Board *board, int sq, int piece) {
     }
 }
 
-
 void board_print_fen(Board *board) {
     char* fen = board_to_fen(board);
     printf("%s \n", fen);

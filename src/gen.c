@@ -1,5 +1,4 @@
 #include <string.h>
-#include <stdio.h>
 #include "gen.h"
 
 #define EMIT_MOVE(m, a, b) \
@@ -480,8 +479,7 @@ int is_check(Board *board) {
 }
 
 int is_checkmate(Board *board) {
-    Move moves[MAX_MOVES];
-    return is_check(board) && !gen_legal_moves(board, moves);
+    return is_check(board) && !has_legal_moves(board);
 } 
 
 int is_illegal(Board *board) {
