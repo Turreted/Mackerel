@@ -10,9 +10,46 @@
 #define INF 99999
 
 // evaulation function to determine who is better at this position
+// should return negative values for black and positive values for white
 int eval_board(Board *board) {
-    signed int perspective = board->color == WHITE ? -1 : 1;
-    return perspective * ( board->black_material - board->white_material );
+    int perspective = board->color == WHITE ? 1 : -1;
+
+    // find points resulting from best position
+    int position_weight = 0;
+    for (int sq = 0; sq < 64; sq++) {
+        int color = COLOR(board->squares[sq]);
+        int lookup_sq = 63 - sq;
+        
+        if (color == WHITE) {
+            switch (PIECE(board->squares[sq])){
+                case PAWN: position_weight   += POSITION_WHITE_PAWN[lookup_sq]; break;
+                case KNIGHT: position_weight += POSITION_WHITE_KNIGHT[lookup_sq]; break;
+                case BISHOP: position_weight += POSITION_WHITE_BISHOP[lookup_sq]; break;
+                case ROOK: position_weight   += POSITION_WHITE_ROOK[lookup_sq]; break;
+                case QUEEN: position_weight  += POSITION_WHITE_QUEEN[lookup_sq]; break;
+                case KING: position_weight   += POSITION_WHITE_KING[lookup_sq]; break;
+                default: break;
+            }
+        } else if (color == BLACK) {
+            switch (PIECE(board->squares[sq])){
+                case PAWN: position_weight   += POSITION_BLACK_PAWN[lookup_sq]; break;
+                case KNIGHT: position_weight += POSITION_BLACK_KNIGHT[lookup_sq]; break;
+                case BISHOP: position_weight += POSITION_BLACK_BISHOP[lookup_sq]; break;
+                case ROOK: position_weight   += POSITION_BLACK_ROOK[lookup_sq]; break;
+                case QUEEN: position_weight  += POSITION_BLACK_QUEEN[lookup_sq]; break;
+                case KING: position_weight   += POSITION_BLACK_KING[lookup_sq]; break;
+                default: break;
+            }
+        }
+    }
+
+    // find point difference in material
+    int material_weight = perspective * (board->white_material - board->black_material);
+    position_weight *= perspective;
+
+    //printf("Position weight: %d, material weight: %d\n", position_weight, material_weight);
+
+    return position_weight + material_weight;
 }
 
 // compares move scores so we can sort the list. Compares from greatest to least.
@@ -93,11 +130,6 @@ int gen_sorted_moves(Board *board, Move *moves) {
     qsort(move_scores, move_count, sizeof(MoveScore), comp_moves);
 
     for (int i = 0; i < move_count; i++){
-        /*
-        char move_str[8];
-        move_to_string(&move_scores[i].move, move_str);
-        printf("Move: %s, score: %d\n", move_str, move_scores[i].score);
-        */
        // TODO: make sure there isn't a memory corruption issue here
        moves[i] = move_scores[i].move;
     }

@@ -13,11 +13,13 @@
 
 int minmax(Search *search, Board *board, int depth) {
     search->depth = depth;
+    search->eval_count = 0;
     int perspective = board->color == WHITE ? 1 : -1;
     return perspective * minmax_dfs(search, board, depth, -INF, INF);
 }
 
 int minmax_dfs(Search *search, Board *board, int depth, int alpha, int beta) {
+    search->eval_count++;
     Move moves[MAX_MOVES];
     Undo undo;
     int move_count = gen_sorted_moves(board, moves);

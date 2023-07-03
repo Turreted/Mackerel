@@ -5,6 +5,7 @@
 #include "move.h"
 
 typedef struct {
+    int eval_count;
     int depth;
     int score;
     Move move;

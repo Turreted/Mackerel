@@ -353,7 +353,7 @@ void print_bb(bb bitboard) {
 }
 
 char *board_to_fen(Board *board) {
-    char fen[80];
+    char fen[256];
     char ascii_zero = 48;
 
     int ptr = 0;

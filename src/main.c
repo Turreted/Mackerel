@@ -15,10 +15,10 @@ static Search search;
 
 int run_game() {
     bb_init();
-    char *fen = "r3k2r/p1ppqpb1/Bn3np1/3PN3/1p2P3/2N2Q2/PPPB1PpP/R3K2R w - - 0 1";
+    char *fen = "r2qkb1r/p1p2ppp/2p5/3p4/4p3/2N2b2/PPPPQPPP/R1B2RK1 w - - 0 1";
     board_load_fen(&board, fen);
 
-    int depth = 6;
+    int depth = 4;
     search.depth = depth;
 
     // perform search
@@ -30,7 +30,8 @@ int run_game() {
     clock_t end = clock();
     double time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
 
-    printf("Found best move %s with score %d in %fs\n", move_str, search.score, time_spent);    
+    printf("Found best move %s with score %d\n", move_str, search.score);    
+    printf("For Depth %d, checked %d positions in %fs\n", search.depth, search.eval_count, time_spent);    
     
     board_print(&board);
     board_print_fen(&board);
@@ -54,10 +55,16 @@ void test_sorting() {
     gen_sorted_moves(&board, moves);
 }
 
+void test_eval() {
+    bb_init();
+    char *fen = "8/8/8/8/8/8/3p4/8 w - - 0 1";
+    board_load_fen(&board, fen);
+    Move moves[256];
+    printf("Pawn moves: %d\n", gen_white_pawn_moves(&board, moves));
+
+    eval_board(&board);
+}
+
 int main() {
     run_game();
 }
-
-
-
-
