@@ -17,7 +17,7 @@ static Search search;
 int run_game(char *fen, int verbose) {
     board_load_fen(&board, fen);
 
-    int depth = 3;
+    int depth = 4;
     search.depth = depth;
 
     // perform search
@@ -55,7 +55,8 @@ void test_sorting(char *fen) {
     board_load_fen(&board, fen);
 
     Move moves[MAX_MOVES];
-    int c = gen_sorted_moves(&board, moves);
+    int c = gen_legal_moves(&board, moves);
+    order_moves(&board, moves, c);
     for (int i = 0; i < c; i++) {
         print_move(&board, &moves[i]);
         printf(" ");

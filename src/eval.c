@@ -7,7 +7,7 @@
 #include "util.h"
 #include "eval.h"
 
-#define INF 99999
+#define INF 2147483646
 
 // evaulation function to determine who is better at which position.
 // Should return negative values for black and positive values for white
@@ -83,10 +83,7 @@ int score_piece_value(int piece) {
 }
 
 // Sorts moves by (predicted) best to worst to speed up Alpha-Beta pruning
-int gen_sorted_moves(Board *board, Move *moves) {
-    Move movelist[MAX_MOVES];
-    int move_count = gen_legal_moves(board, movelist);
-
+int order_moves(Board *board, Move *movelist, int move_count) {
     MoveScore move_scores[move_count];
 
     for (int i = 0; i < move_count; i++) {
@@ -134,7 +131,7 @@ int gen_sorted_moves(Board *board, Move *moves) {
 
     for (int i = 0; i < move_count; i++){
        // TODO: make sure there isn't a memory corruption issue here
-       moves[i] = move_scores[i].move;
+       movelist[i] = move_scores[i].move;
     }
 
     return move_count;
