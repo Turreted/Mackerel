@@ -428,9 +428,8 @@ char *board_to_fen(Board *board) {
        ptr++;
     } 
     if (ptr == 0) {
-        printf("THIS IS IMPOSSIBLE");
-        char test[6] = "- -";
-        strcpy(castle_str, test);
+        char str[6] = "- -";
+        strcpy(castle_str, str);
         ptr += 4;
     }
     
