@@ -427,11 +427,12 @@ char *board_to_fen(Board *board) {
        castle_str[ptr] = 'q'; 
        ptr++;
     } 
+    /*
     if (ptr == 0) {
         char str[6] = "- -";
         strcpy(castle_str, str);
         ptr += 4;
-    }
+    }*/
     
     ptr++;
     castle_str[ptr] = '\0';

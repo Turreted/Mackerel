@@ -14,6 +14,11 @@
 int eval_board(Board *board) {
     int perspective = board->color == WHITE ? 1 : -1;
 
+    // i need this for some reason
+    if (is_checkmate(board)) {
+        return -perspective * INF;
+    }
+
     // find points resulting from best position
     int position_weight = 0;
     for (int sq = 0; sq < 64; sq++) {
@@ -44,12 +49,11 @@ int eval_board(Board *board) {
     }
 
     // find point difference in material
-    int material_weight = perspective * (board->white_material - board->black_material);
-    position_weight *= perspective;
+    int material_weight = board->white_material - board->black_material;
 
     //printf("Position weight: %d, material weight: %d\n", position_weight, material_weight);
 
-    return position_weight + material_weight;
+    return perspective * (position_weight + material_weight);
 }
 
 // compares move scores so we can sort the list. Compares from greatest to least.
@@ -57,6 +61,11 @@ int comp_moves(const void * a, const void * b) {
     MoveScore *x = (MoveScore *) a;
     MoveScore *y = (MoveScore *) b;
     return y->score - x->score;
+}
+
+// search only captures for the best viable position
+int quiescence_search(Board *board, int alpha, int beta) {
+    return 0;
 }
 
 // convert piece to value
