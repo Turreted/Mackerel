@@ -21,36 +21,31 @@ int eval_board(Board *board) {
 
     // find points resulting from best position
     int position_weight = 0;
-    /*
     for (int sq = 0; sq < 64; sq++) {
         int color = COLOR(board->squares[sq]);
-        int lookup_sq = 63 - sq;
         
         if (color == WHITE) {
             switch (PIECE(board->squares[sq])){
-                case PAWN: position_weight   += POSITION_WHITE_PAWN[lookup_sq]; break;
-                case KNIGHT: position_weight += POSITION_WHITE_KNIGHT[lookup_sq]; break;
-                case BISHOP: position_weight += POSITION_WHITE_BISHOP[lookup_sq]; break;
-                case ROOK: position_weight   += POSITION_WHITE_ROOK[lookup_sq]; break;
-                case QUEEN: position_weight  += POSITION_WHITE_QUEEN[lookup_sq]; break;
-                case KING: position_weight   += POSITION_WHITE_KING[lookup_sq]; break;
+                case PAWN: position_weight   += POSITION_WHITE_PAWN[sq]; break;
+                case KNIGHT: position_weight += POSITION_WHITE_KNIGHT[sq]; break;
+                case BISHOP: position_weight += POSITION_WHITE_BISHOP[sq]; break;
+                case ROOK: position_weight   += POSITION_WHITE_ROOK[sq]; break;
+                case QUEEN: position_weight  += POSITION_WHITE_QUEEN[sq]; break;
+                case KING: position_weight   += POSITION_WHITE_KING[sq]; break;
                 default: break;
             }
-
-        // TODO: THESE ARE BROKEN!!!
         } else if (color == BLACK) {
             switch (PIECE(board->squares[sq])){
-                case PAWN: position_weight   -= POSITION_BLACK_PAWN[lookup_sq]; break;
-                case KNIGHT: position_weight -= POSITION_BLACK_KNIGHT[lookup_sq]; break;
-                case BISHOP: position_weight -= POSITION_BLACK_BISHOP[lookup_sq]; break;
-                case ROOK: position_weight   -= POSITION_BLACK_ROOK[lookup_sq]; break;
-                case QUEEN: position_weight  -= POSITION_BLACK_QUEEN[lookup_sq]; break;
-                case KING: position_weight   -= POSITION_BLACK_KING[lookup_sq]; break;
+                case PAWN: position_weight   -= POSITION_BLACK_PAWN[sq]; break;
+                case KNIGHT: position_weight -= POSITION_BLACK_KNIGHT[sq]; break;
+                case BISHOP: position_weight -= POSITION_BLACK_BISHOP[sq]; break;
+                case ROOK: position_weight   -= POSITION_BLACK_ROOK[sq]; break;
+                case QUEEN: position_weight  -= POSITION_BLACK_QUEEN[sq]; break;
+                case KING: position_weight   -= POSITION_BLACK_KING[sq]; break;
                 default: break;
             }
         }
     }
-    */
 
     // find point difference in material
     int material_weight = board->white_material - board->black_material;
