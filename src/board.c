@@ -411,7 +411,7 @@ char *board_to_fen(Board *board) {
 
     ptr--;
     fen[ptr] = '\0';
-    char castle_str[5];
+    char castle_str[6];
     ptr = 0;
 
     if (board->castle & CASTLE_WHITE_KING) {
@@ -426,16 +426,20 @@ char *board_to_fen(Board *board) {
     } if (board->castle & CASTLE_BLACK_QUEEN) {
        castle_str[ptr] = 'q'; 
        ptr++;
-    } if (ptr == 0) {
-        strcpy(castle_str, "- -");
+    } 
+    if (ptr == 0) {
+        printf("THIS IS IMPOSSIBLE");
+        char test[6] = "- -";
+        strcpy(castle_str, test);
         ptr += 4;
     }
+    
     ptr++;
     castle_str[ptr] = '\0';
     char color = board->color == WHITE ? 'w' : 'b';
     
     char* full_fen = (char*) malloc(sizeof(char) * 128);
-    sprintf(full_fen, "%s %c %s", fen, color, castle_str);
+    sprintf(full_fen, "%s %c %s - 0 1", fen, color, castle_str);
 
     return full_fen;
 }
