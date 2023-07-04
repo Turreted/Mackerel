@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <time.h>
 #include <stdlib.h>
-
+#include <string.h>
 
 #include "board.h"
 #include "gen.h"
@@ -13,12 +13,11 @@ static Undo undo;
 static Search search;
 
 
-int run_game() {
+int run_game(char *fen, int verbose) {
     bb_init();
-    char *fen = "r2qkb1r/p1p2ppp/2p5/3p4/4p3/2N2b2/PPPPQPPP/R1B2RK1 w - - 0 1";
     board_load_fen(&board, fen);
 
-    int depth = 4;
+    int depth = 5;
     search.depth = depth;
 
     // perform search
@@ -30,18 +29,24 @@ int run_game() {
     clock_t end = clock();
     double time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
 
-    printf("Found best move %s with score %d\n", move_str, search.score);    
-    printf("For Depth %d, checked %d positions in %fs\n", search.depth, search.eval_count, time_spent);    
-    
-    board_print(&board);
-    board_print_fen(&board);
-    printf("\n");
+    if (verbose) {
+        printf("Found best move %s with score %d\n", move_str, search.score);    
+        printf("For Depth %d, checked %d positions in %fs\n", search.depth, search.eval_count, time_spent);    
+        
+        board_print(&board);
+        board_print_fen(&board);
+        printf("\n");
 
-    do_move(&board, &search.move, &undo);
-    printf("\n");
+        do_move(&board, &search.move, &undo);
+        printf("\n");
 
-    board_print(&board);
-    board_print_fen(&board);
+        board_print(&board);
+        board_print_fen(&board);
+    } else {
+        //do_move(&board, &search.move, &undo);
+        //board_print_fen(&board);
+        print_move(&board, &search.move);
+    }
 
     return 0;
 }
@@ -65,6 +70,19 @@ void test_eval() {
     eval_board(&board);
 }
 
-int main() {
-    run_game();
+// accept fen string as an input
+int main(int argc, char **argv) {
+    //int verbose = 0;
+    char fen[256] = "";
+    int verbose = 1;
+
+    for (int i = 1; i < argc; i++) {
+        if (strcmp(argv[i], "-q") == 0 || strcmp(argv[i], "--quiet") == 0) {
+            verbose = 0;
+        } else if (strlen(fen) + strlen(argv[i]) + 1 < 256) {
+            strcat(fen, argv[i]);
+            strcat(fen, " ");
+        }
+    }
+    run_game(fen, verbose);
 }
