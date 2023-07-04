@@ -59,7 +59,13 @@ int minmax_dfs(Search *search, Board *board, int depth, int alpha, int beta) {
         // best play and worst plays are flipped
         int evaluation = -minmax_dfs(search, board, depth-1, -beta, -alpha);
         undo_move(board, move, &undo);
-
+        
+        // previous move was too good, which means that this position will
+        // never be reached (https://raphsilva.github.io/utilities/minimax_simulator/
+        if (evaluation >= beta) {
+          return beta; // *snip*
+        }
+      
         // overwrite alpha value with our best score, write current move
         // to return value if we are at the top of our search tree
         if (evaluation > alpha && search->depth == depth) {
@@ -70,17 +76,13 @@ int minmax_dfs(Search *search, Board *board, int depth, int alpha, int beta) {
         // overwrite alpha score if current is better
         alpha = max(alpha, evaluation);
         
-        // previous move was too good, which means that this position will
-        // never be reached (https://raphsilva.github.io/utilities/minimax_simulator/
-        if (evaluation >= beta) {
-          return beta; // *snip*
-        }
+
     }
 
     return alpha;
 }
 
-// search only captures for the best viable position. This makes sure we
+// search only noisy positions for the best viable position. This makes sure we
 // don't stop our search in a bad position that the evaluator thinks is good
 int quiescence_search(Board *board, int alpha, int beta) {
     Undo undo;
@@ -99,6 +101,7 @@ int quiescence_search(Board *board, int alpha, int beta) {
     
     for (int i = 0; i < attacks; i++) {
       Move *move = &moves[i];
+      // only check non-checks for now
       if (!(board->squares[move->dst] == KING)) {
 
         do_move(board, move, &undo);
