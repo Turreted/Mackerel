@@ -12,12 +12,12 @@ static Board board;
 static Undo undo;
 static Search search;
 
+#define INF 99999
 
 int run_game(char *fen, int verbose) {
-    bb_init();
     board_load_fen(&board, fen);
 
-    int depth = 5;
+    int depth = 1;
     search.depth = depth;
 
     // perform search
@@ -51,23 +51,24 @@ int run_game(char *fen, int verbose) {
     return 0;
 }
 
-void test_sorting() {
-    bb_init();
-    char *fen = "4k3/1p6/8/8/R7/8/8/4K3 w - - 0 1";
+void test_sorting(char *fen) {
     board_load_fen(&board, fen);
 
     Move moves[MAX_MOVES];
-    gen_sorted_moves(&board, moves);
+    int c = gen_sorted_moves(&board, moves);
+    for (int i = 0; i < c; i++) {
+        print_move(&board, &moves[i]);
+        printf(" ");
+    }
 }
 
-void test_eval() {
-    bb_init();
-    char *fen = "8/8/8/8/8/8/3p4/8 w - - 0 1";
+void test_eval(char *fen) {
     board_load_fen(&board, fen);
     Move moves[256];
-    printf("Pawn moves: %d\n", gen_white_pawn_moves(&board, moves));
+    int init = eval_board(&board);
+    int res = quiescence_search(&board, -INF, +INF);
 
-    eval_board(&board);
+    printf("Final Score: %d\n", res);
 }
 
 // accept fen string as an input
@@ -84,5 +85,7 @@ int main(int argc, char **argv) {
             strcat(fen, " ");
         }
     }
+    // run_game(fen, verbose);
+    bb_init();
     run_game(fen, verbose);
 }

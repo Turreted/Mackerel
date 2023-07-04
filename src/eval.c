@@ -9,8 +9,8 @@
 
 #define INF 99999
 
-// evaulation function to determine who is better at this position
-// should return negative values for black and positive values for white
+// evaulation function to determine who is better at which position.
+// Should return negative values for black and positive values for white
 int eval_board(Board *board) {
     int perspective = board->color == WHITE ? 1 : -1;
 
@@ -21,6 +21,7 @@ int eval_board(Board *board) {
 
     // find points resulting from best position
     int position_weight = 0;
+    /*
     for (int sq = 0; sq < 64; sq++) {
         int color = COLOR(board->squares[sq]);
         int lookup_sq = 63 - sq;
@@ -35,25 +36,28 @@ int eval_board(Board *board) {
                 case KING: position_weight   += POSITION_WHITE_KING[lookup_sq]; break;
                 default: break;
             }
+
+        // TODO: THESE ARE BROKEN!!!
         } else if (color == BLACK) {
             switch (PIECE(board->squares[sq])){
-                case PAWN: position_weight   += POSITION_BLACK_PAWN[lookup_sq]; break;
-                case KNIGHT: position_weight += POSITION_BLACK_KNIGHT[lookup_sq]; break;
-                case BISHOP: position_weight += POSITION_BLACK_BISHOP[lookup_sq]; break;
-                case ROOK: position_weight   += POSITION_BLACK_ROOK[lookup_sq]; break;
-                case QUEEN: position_weight  += POSITION_BLACK_QUEEN[lookup_sq]; break;
-                case KING: position_weight   += POSITION_BLACK_KING[lookup_sq]; break;
+                case PAWN: position_weight   -= POSITION_BLACK_PAWN[lookup_sq]; break;
+                case KNIGHT: position_weight -= POSITION_BLACK_KNIGHT[lookup_sq]; break;
+                case BISHOP: position_weight -= POSITION_BLACK_BISHOP[lookup_sq]; break;
+                case ROOK: position_weight   -= POSITION_BLACK_ROOK[lookup_sq]; break;
+                case QUEEN: position_weight  -= POSITION_BLACK_QUEEN[lookup_sq]; break;
+                case KING: position_weight   -= POSITION_BLACK_KING[lookup_sq]; break;
                 default: break;
             }
         }
     }
+    */
 
     // find point difference in material
     int material_weight = board->white_material - board->black_material;
 
     //printf("Position weight: %d, material weight: %d\n", position_weight, material_weight);
 
-    return perspective * (position_weight + material_weight);
+    return (position_weight + material_weight);
 }
 
 // compares move scores so we can sort the list. Compares from greatest to least.
@@ -61,11 +65,6 @@ int comp_moves(const void * a, const void * b) {
     MoveScore *x = (MoveScore *) a;
     MoveScore *y = (MoveScore *) b;
     return y->score - x->score;
-}
-
-// search only captures for the best viable position
-int quiescence_search(Board *board, int alpha, int beta) {
-    return 0;
 }
 
 // convert piece to value
@@ -110,7 +109,7 @@ int gen_sorted_moves(Board *board, Move *moves) {
         unsigned int predicted_score = 0;
 
         // taking a high-value piece with a low-value piece is good
-        predicted_score += max(capture_value - piece_value, 0);
+        predicted_score += max(capture_value - piece_value + 10, 0);
 
         // promoting a pawn is good
         predicted_score += move->promotion * 500;

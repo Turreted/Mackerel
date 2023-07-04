@@ -18,6 +18,8 @@ int minmax(Search *search, Board *board, int depth) {
     return perspective * minmax_dfs(search, board, depth, -INF, INF);
 }
 
+// perform minmax search with alpha-beta pruning. Note that each step
+// returns the max possible score at that layer, regardless of player
 int minmax_dfs(Search *search, Board *board, int depth, int alpha, int beta) {
     search->eval_count++;
     Move moves[MAX_MOVES];
@@ -39,9 +41,11 @@ int minmax_dfs(Search *search, Board *board, int depth, int alpha, int beta) {
       }
     }
 
-    // at the bottom of the tree return the raw board score
+    // at the bottom of the tree return the quiescence score, which is the 
+    // best reachable board state after all 'noisy' (ie captures + checks)
+    // states have been reached
     if (depth == 0) {
-        return eval_board(board);
+        return quiescence_search(board, -INF, +INF);
     }
 
     for (int i = 0; i < move_count; i++) {
@@ -74,4 +78,42 @@ int minmax_dfs(Search *search, Board *board, int depth, int alpha, int beta) {
     }
 
     return alpha;
+}
+
+// search only captures for the best viable position. This makes sure we
+// don't stop our search in a bad position that the evaluator thinks is good
+int quiescence_search(Board *board, int alpha, int beta) {
+    Undo undo;
+    Move moves[MAX_MOVES];
+    int perspective = (board->color == WHITE) ? 1 : -1;
+    int attacks = (board->color == WHITE) ? 
+      gen_white_attacks(board, moves) : 
+      gen_black_attacks(board, moves);
+
+    // note that we have to multiply the result returned by eval so that
+    // good black positions are also ranked as +
+    int stand_eval = perspective * eval_board(board);
+    if (stand_eval >= beta)
+      return beta;
+    alpha = max(alpha, stand_eval);
+    
+    for (int i = 0; i < attacks; i++) {
+      Move *move = &moves[i];
+      if (!(board->squares[move->dst] == KING)) {
+
+        do_move(board, move, &undo);
+        int evaluation = -quiescence_search(board, -beta, -alpha);
+        undo_move(board, move, &undo);
+        
+        // previous move was too good, prune
+        if (evaluation >= beta) {
+          return beta; // *snip*
+        }
+
+        // overwrite alpha score if current is better
+        alpha = max(alpha, evaluation);
+      }
+    }
+  
+  return alpha;
 }
