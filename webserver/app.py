@@ -11,7 +11,7 @@ def run_game():
 
 @app.route('/move', methods = ['POST'])
 def run_engine():
-    fen_data = request.get_json(force=True, silent=False, cache=True)
+    fen_data = request.get_json(force=True)
 
     if "position" not in fen_data.keys():
         return "Error: key 'position' required"

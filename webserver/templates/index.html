@@ -21,7 +21,7 @@
 
 <script>
   var board = null
-  var engineColor = 'w'
+  var engineColor = 'b'
   var playerColor = (engineColor == 'w') ? 'b' : 'w';
   var game = new Chess()
   var $status = $('#status')
@@ -86,6 +86,7 @@
     // illegal move
     if (move === null) return 'snapback'
 
+    console.log(game.fen())
     window.setTimeout(makeEngineMove, 250)
     updateStatus()
   }
