@@ -1,6 +1,8 @@
 #ifndef UTIL_H
 #define UTIL_H
 
+#define INF 2147483647
+
 unsigned int prng();
 void prng_seed(unsigned int seed);
 char *tokenize(char *str, const char *delim, char **key);

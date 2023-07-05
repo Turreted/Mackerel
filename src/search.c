@@ -9,7 +9,6 @@
 #include "eval.h"
 #include "util.h"
 
-#define INF 2147483646
 #define Q_DEPTH 5
 
 int minmax(Search *search, Board *board, int depth) {
@@ -39,7 +38,7 @@ int minmax_dfs(Search *search, Board *board, int depth, int alpha, int beta) {
     // check if checkmate or stalemate
     if (move_count == 0) {
       if (is_check(board)) {
-        return -INF;
+        return -INF + 1;
       } else {
         return 0;
       }
@@ -49,7 +48,9 @@ int minmax_dfs(Search *search, Board *board, int depth, int alpha, int beta) {
     // best reachable board state after all 'noisy' (ie captures + checks)
     // states have been reached
     if (depth == 0) {
-        return quiescence_search(board, Q_DEPTH, -INF, +INF);
+        int perspective = (board->color == WHITE) ? 1 : -1;
+        return perspective * eval_board(board);
+        // return quiescence_search(board, Q_DEPTH, -INF, +INF);
     }
 
     for (int i = 0; i < move_count; i++) {
@@ -69,10 +70,11 @@ int minmax_dfs(Search *search, Board *board, int depth, int alpha, int beta) {
         if (evaluation >= beta) {
           return beta; // *snip*
         }
-      
+
         // overwrite alpha value with our best score, write current move
         // to return value if we are at the top of our search tree
         if (evaluation > alpha && search->depth == depth) {
+          //printf("Alpha: %d, Beta: %d\n", alpha, beta);
           search->move = *move;
           search->score = evaluation;
         }
@@ -89,8 +91,13 @@ int minmax_dfs(Search *search, Board *board, int depth, int alpha, int beta) {
 // search only noisy positions for the best viable position. This makes sure we
 // don't stop our search in a bad position that the evaluator thinks is good
 int quiescence_search(Board *board, int depth, int alpha, int beta) {
-  // probably buggy
-  if (depth == 0) return alpha;
+  // probably buggy, might want to return max of alpha and eval_board?
+  if (is_checkmate(board)) { 
+    return -INF + 1;
+  }
+  if (depth == 0) {
+    return alpha;
+  }
 
     Undo undo;
     Move moves[MAX_MOVES];
@@ -108,8 +115,6 @@ int quiescence_search(Board *board, int depth, int alpha, int beta) {
     
     for (int i = 0; i < attacks; i++) {
       Move *move = &moves[i];
-      // only check non-checks for now
-      if (!(board->squares[move->dst] == KING)) {
 
         do_move(board, move, &undo);
         int evaluation = -quiescence_search(board, depth -1, -beta, -alpha);
@@ -122,7 +127,6 @@ int quiescence_search(Board *board, int depth, int alpha, int beta) {
 
         // overwrite alpha score if current is better
         alpha = max(alpha, evaluation);
-      }
     }
   
   return alpha;

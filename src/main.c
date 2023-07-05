@@ -7,12 +7,12 @@
 #include "gen.h"
 #include "eval.h"
 #include "search.h"
+#include "util.h"
 
 static Board board;
 static Undo undo;
 static Search search;
 
-#define INF 99999
 
 int run_game(char *fen, int verbose) {
     board_load_fen(&board, fen);
