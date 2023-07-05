@@ -17,7 +17,7 @@ static Search search;
 int run_game(char *fen, int verbose) {
     board_load_fen(&board, fen);
 
-    int depth = 4;
+    int depth = 6;
     search.depth = depth;
 
     // perform search
@@ -66,7 +66,7 @@ void test_sorting(char *fen) {
 void test_eval(char *fen) {
     board_load_fen(&board, fen);
     int init = eval_board(&board);
-    quiescence_search(&board, -INF, +INF);
+    //quiescence_search(&board, -INF, +INF);
 
     printf("Final Score: %d\n", init);
 }

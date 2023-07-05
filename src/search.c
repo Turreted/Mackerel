@@ -10,6 +10,7 @@
 #include "util.h"
 
 #define INF 2147483646
+#define Q_DEPTH 5
 
 int minmax(Search *search, Board *board, int depth) {
     search->depth = depth;
@@ -48,7 +49,7 @@ int minmax_dfs(Search *search, Board *board, int depth, int alpha, int beta) {
     // best reachable board state after all 'noisy' (ie captures + checks)
     // states have been reached
     if (depth == 0) {
-        return quiescence_search(board, -INF, +INF);
+        return quiescence_search(board, Q_DEPTH, -INF, +INF);
     }
 
     for (int i = 0; i < move_count; i++) {
@@ -87,7 +88,10 @@ int minmax_dfs(Search *search, Board *board, int depth, int alpha, int beta) {
 
 // search only noisy positions for the best viable position. This makes sure we
 // don't stop our search in a bad position that the evaluator thinks is good
-int quiescence_search(Board *board, int alpha, int beta) {
+int quiescence_search(Board *board, int depth, int alpha, int beta) {
+  // probably buggy
+  if (depth == 0) return alpha;
+
     Undo undo;
     Move moves[MAX_MOVES];
     int perspective = (board->color == WHITE) ? 1 : -1;
@@ -108,7 +112,7 @@ int quiescence_search(Board *board, int alpha, int beta) {
       if (!(board->squares[move->dst] == KING)) {
 
         do_move(board, move, &undo);
-        int evaluation = -quiescence_search(board, -beta, -alpha);
+        int evaluation = -quiescence_search(board, depth -1, -beta, -alpha);
         undo_move(board, move, &undo);
         
         // previous move was too good, prune

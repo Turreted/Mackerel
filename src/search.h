@@ -13,6 +13,6 @@ typedef struct {
 
 int minmax(Search *search, Board *board, int depth);
 int minmax_dfs(Search *search, Board *board, int depth, int alpha, int beta);
-int quiescence_search(Board *board, int alpha, int beta);
+int quiescence_search(Board *board, int depth, int alpha, int beta);
 
 #endif
