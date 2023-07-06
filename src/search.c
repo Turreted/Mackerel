@@ -48,9 +48,9 @@ int minmax_dfs(Search *search, Board *board, int depth, int alpha, int beta) {
     // best reachable board state after all 'noisy' (ie captures + checks)
     // states have been reached
     if (depth == 0) {
-        int perspective = (board->color == WHITE) ? 1 : -1;
-        return perspective * eval_board(board);
-        // return quiescence_search(board, Q_DEPTH, -INF, +INF);
+        //int perspective = (board->color == WHITE) ? 1 : -1;
+        //return perspective * eval_board(board);
+        return quiescence_search(board, Q_DEPTH, -INF, +INF);
     }
 
     for (int i = 0; i < move_count; i++) {
@@ -75,6 +75,8 @@ int minmax_dfs(Search *search, Board *board, int depth, int alpha, int beta) {
         // to return value if we are at the top of our search tree
         if (evaluation > alpha && search->depth == depth) {
           //printf("Alpha: %d, Beta: %d\n", alpha, beta);
+          print_move(board, move);
+          printf("\n");
           search->move = *move;
           search->score = evaluation;
         }

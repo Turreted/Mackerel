@@ -7,6 +7,7 @@
 #include "gen.h"
 #include "eval.h"
 #include "search.h"
+#include "hmap.h"
 #include "util.h"
 
 static Board board;
@@ -69,6 +70,14 @@ void test_eval(char *fen) {
     //quiescence_search(&board, -INF, +INF);
 
     printf("Final Score: %d\n", init);
+}
+
+void hashmap_test() {
+    board_load_fen(&board, "4k3/8/r7/8/8/8/3r4/5K2 w - - 0 1");
+    HashMap *h = hashmap_init(10);
+
+    hashmap_set(h, &board, 10);
+    hashmap_print(h);
 }
 
 // accept fen string as an input
