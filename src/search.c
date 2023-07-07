@@ -1,9 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
 #include "search.h"
-
 #include "board.h"
+#include "hmap.h"
 #include "move.h"
 #include "gen.h"
 #include "eval.h"
@@ -14,8 +15,15 @@
 int minmax(Search *search, Board *board, int depth) {
     search->depth = depth;
     search->eval_count = 0;
+    search->hmap = hashmap_init(16);
+
     int perspective = board->color == WHITE ? 1 : -1;
-    return perspective * minmax_dfs(search, board, depth, -INF, INF);
+    int res = perspective * minmax_dfs(search, board, depth, -INF, INF);
+
+    //hashmap_print(search->hmap);
+    hashmap_free(search->hmap);
+
+    return res;
 }
 
 // perform minmax search with alpha-beta pruning. Note that each step
@@ -27,7 +35,7 @@ int minmax_dfs(Search *search, Board *board, int depth, int alpha, int beta) {
 
     // get list of moves and sort them by predicted best to worst
     int move_count = gen_legal_moves(board, moves);
-    order_moves(board, moves, move_count);
+    order_moves(board, search, moves, move_count);
 
     // If there is an illegal move kill the program
     if (is_illegal(board)) {
@@ -63,6 +71,11 @@ int minmax_dfs(Search *search, Board *board, int depth, int alpha, int beta) {
         // opposite results also flip the alpha and beta parameters, as the 
         // best play and worst plays are flipped
         int evaluation = -minmax_dfs(search, board, depth-1, -beta, -alpha);
+
+        // set hashtable to search value for move ordering (probably buggy)
+        // int perspective = (board->color == WHITE) ? 1 : -1;
+        hashmap_set(search->hmap, board, evaluation);
+
         undo_move(board, move, &undo);
         
         // previous move was too good, which means that this position will
@@ -75,16 +88,12 @@ int minmax_dfs(Search *search, Board *board, int depth, int alpha, int beta) {
         // to return value if we are at the top of our search tree
         if (evaluation > alpha && search->depth == depth) {
           //printf("Alpha: %d, Beta: %d\n", alpha, beta);
-          print_move(board, move);
-          printf("\n");
           search->move = *move;
           search->score = evaluation;
         }
 
         // overwrite alpha score if current is better
         alpha = max(alpha, evaluation);
-        
-
     }
 
     return alpha;

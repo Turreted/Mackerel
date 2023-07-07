@@ -43,6 +43,7 @@ int run_game(char *fen, int verbose) {
 
         board_print(&board);
         board_print_fen(&board);
+        //hashmap_print(search.hmap);
     } else {
         //do_move(&board, &search.move, &undo);
         //board_print_fen(&board);
@@ -57,7 +58,7 @@ void test_sorting(char *fen) {
 
     Move moves[MAX_MOVES];
     int c = gen_legal_moves(&board, moves);
-    order_moves(&board, moves, c);
+    //order_moves(&board, moves, c);
     for (int i = 0; i < c; i++) {
         print_move(&board, &moves[i]);
         printf(" ");
@@ -73,16 +74,23 @@ void test_eval(char *fen) {
 }
 
 void hashmap_test() {
+    Board board2;
     board_load_fen(&board, "4k3/8/r7/8/8/8/3r4/5K2 w - - 0 1");
-    HashMap *h = hashmap_init(10);
+    board_load_fen(&board2, "3Qk3/8/r7/8/8/8/3r4/5K2 w - - 0 1");
+    HashMap *h = hashmap_init(16);
 
-    hashmap_set(h, &board, 10);
+    for (int i = 0; i < 100; i++) {
+        hashmap_set(h, &board, 101);
+        hashmap_set(h, &board, 100);
+        hashmap_set(h, &board2, 99);
+    }
+
     hashmap_print(h);
+    hashmap_free(h);
 }
 
 // accept fen string as an input
 int main(int argc, char **argv) {
-    //int verbose = 0;
     char fen[256] = "";
     int verbose = 1;
 

@@ -3,6 +3,7 @@
 
 #include "board.h"
 #include "move.h"
+#include "search.h"
 
 typedef struct {
     int score;
@@ -11,6 +12,6 @@ typedef struct {
 
 int eval_board(Board *board);
 void print_legal_moves(Board *board);
-int order_moves(Board *board, Move *moves, int move_count);
+int order_moves(Board *board, Search *search, Move *moves, int move_count);
 
 #endif

@@ -6,8 +6,8 @@
 #include "move.h"
 #include "util.h"
 #include "eval.h"
-
-#define INF 2147483646
+#include "hmap.h"
+#include "search.h"
 
 // evaulation function to determine who is better at which position.
 // Should return negative values for black and positive values for white
@@ -83,7 +83,7 @@ int score_piece_value(int piece) {
 }
 
 // Sorts moves by (predicted) best to worst to speed up Alpha-Beta pruning
-int order_moves(Board *board, Move *movelist, int move_count) {
+int order_moves(Board *board, Search *search, Move *movelist, int move_count) {
     MoveScore move_scores[move_count];
 
     for (int i = 0; i < move_count; i++) {
@@ -98,27 +98,39 @@ int order_moves(Board *board, Move *movelist, int move_count) {
         int capture = PIECE(board->squares[dst]);
         int capture_value = score_piece_value(capture);
 
-        unsigned int predicted_score = 0;
+        int predicted_score = 0;
 
-        // taking a high-value piece with a low-value piece is good
-        predicted_score += max(capture_value - piece_value + 10, 0);
+        // check if position is in the hash table, in which case use it for move ordering
+        HashNode *ttlookup = hashmap_get(search->hmap, board);
+        if (false) {
+            //printf("Hash Hit!\n");
+            //int perspective = (board->color == WHITE) ? 1 : -1;
+            predicted_score = ttlookup->value;
+        } else {
+            // taking a high-value piece with a low-value piece is good
+            predicted_score += max(capture_value - piece_value + 10, 0);
 
-        // promoting a pawn is good
-        predicted_score += move->promotion * 500;
+            // promoting a pawn is good
+            predicted_score += move->promotion * 500;
 
-        // putting the opponent in check is good, checkmate is better
-        do_move(board, move, &undo);
-        predicted_score += is_check(board) * 50;
-        predicted_score += is_checkmate(board) * INF;
-        undo_move(board, move, &undo);
+            // putting the opponent in check is good, checkmate is better
+            do_move(board, move, &undo);
+            predicted_score += is_check(board) * 50;
+            predicted_score += is_checkmate(board) * INF;
+            undo_move(board, move, &undo);
 
-        // moving a piece to a position attacked by a pawn is bad
-        bb dst_mask = 0x1L << dst;
-        Move m[MAX_MOVES];
-        int pawn_attack = board->color == WHITE ? 
-            gen_black_pawn_attacks_against(board, m, dst_mask) : 
-            gen_white_pawn_attacks_against(board, m, dst_mask);
-        predicted_score += pawn_attack * (MATERIAL_PAWN - piece_value);
+            // moving a piece to a position attacked by a pawn is bad
+            bb dst_mask = 0x1L << dst;
+            Move m[MAX_MOVES];
+            int pawn_attack = board->color == WHITE ? 
+                gen_black_pawn_attacks_against(board, m, dst_mask) : 
+                gen_white_pawn_attacks_against(board, m, dst_mask);
+            predicted_score += pawn_attack * (MATERIAL_PAWN - piece_value);
+        }
+        if (ttlookup->set) {
+            printf("\nScore: %d vs %d\n", predicted_score, ttlookup->value);
+            board_print(board);
+        }
 
         // add score to list to it can be sorted
         MoveScore s;

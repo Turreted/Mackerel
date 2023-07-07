@@ -1,7 +1,7 @@
 #ifndef UTIL_H
 #define UTIL_H
 
-#define INF 2147483647
+#define INF 65534
 
 unsigned int prng();
 void prng_seed(unsigned int seed);
