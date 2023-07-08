@@ -17,7 +17,7 @@ static Search search;
 int run_game(char *fen, int verbose) {
     board_load_fen(&board, fen);
 
-    int depth = 6;
+    int depth = 5;
     search.depth = depth;
 
     // perform search
