@@ -26,12 +26,20 @@ int minmax(Search *search, Board *board, int depth) {
     return res;
 }
 
-// perform minmax search with alpha-beta pruning. Note that each step
-// returns the max possible score at that layer, regardless of player
+/*
+  perform minmax search with alpha-beta pruning. Note that each step
+  returns the max possible score at that layer, regardless of player
+
+  Alpha tracks the current best score, while beta tracks the opponent's
+  best score. We can prune a branch if alpha >= beta, as we can assume
+  that the opponent will never choose that branch
+*/
 int minmax_dfs(Search *search, Board *board, int depth, int alpha, int beta) {
     search->eval_count++;
     Move moves[MAX_MOVES];
     Undo undo;
+
+    int hash_flags = HASHF_ALPHA;
 
     // get list of moves and sort them by predicted best to worst
     int move_count = gen_legal_moves(board, moves);
@@ -46,8 +54,10 @@ int minmax_dfs(Search *search, Board *board, int depth, int alpha, int beta) {
     // check if checkmate or stalemate
     if (move_count == 0) {
       if (is_check(board)) {
-        return -INF + 1;
+        hashmap_set(search->hmap, board, -INF, search->depth - depth);
+        return -INF;
       } else {
+        hashmap_set(search->hmap, board, -INF, search->depth - depth);
         return 0;
       }
     }
@@ -56,8 +66,7 @@ int minmax_dfs(Search *search, Board *board, int depth, int alpha, int beta) {
     // best reachable board state after all 'noisy' (ie captures + checks)
     // states have been reached
     if (depth == 0) {
-        //int perspective = (board->color == WHITE) ? 1 : -1;
-        //return perspective * eval_board(board);
+        hashmap_set(search->hmap, board, -INF, search->depth - depth);
         return quiescence_search(board, Q_DEPTH, -INF, +INF);
     }
 
@@ -71,11 +80,6 @@ int minmax_dfs(Search *search, Board *board, int depth, int alpha, int beta) {
         // opposite results also flip the alpha and beta parameters, as the 
         // best play and worst plays are flipped
         int evaluation = -minmax_dfs(search, board, depth-1, -beta, -alpha);
-
-        // set hashtable to search value for move ordering (probably buggy)
-        // int perspective = (board->color == WHITE) ? 1 : -1;
-        hashmap_set(search->hmap, board, evaluation);
-
         undo_move(board, move, &undo);
         
         // previous move was too good, which means that this position will

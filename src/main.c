@@ -74,18 +74,21 @@ void test_eval(char *fen) {
 }
 
 void hashmap_test() {
-    Board board2;
-    board_load_fen(&board, "4k3/8/r7/8/8/8/3r4/5K2 w - - 0 1");
-    board_load_fen(&board2, "3Qk3/8/r7/8/8/8/3r4/5K2 w - - 0 1");
-    HashMap *h = hashmap_init(16);
+    Board b1;
+    Board b2;
+    board_load_fen(&b1, "4k3/8/r7/8/8/8/3r4/5K2 w - - 0 1");
+    board_load_fen(&b2, "4k3/p7/r7/8/8/8/3r4/5K2 w - - 0 1");
+    HashMap *h = hashmap_init(100);
 
-    for (int i = 0; i < 100; i++) {
-        hashmap_set(h, &board, 101);
-        hashmap_set(h, &board, 100);
-        hashmap_set(h, &board2, 99);
-    }
-
+    // set hash values
+    hashmap_set(h, &b1, 1, 0);
+    hashmap_set(h, &b2, 1, 0);
     hashmap_print(h);
+
+    // overwrite values
+    hashmap_set(h, &b1, 2, 1);
+    hashmap_print(h);
+
     hashmap_free(h);
 }
 
@@ -103,5 +106,6 @@ int main(int argc, char **argv) {
         }
     }
     bb_init();
-    run_game(fen, verbose);
+    //run_game(fen, verbose);
+    hashmap_test();
 }
