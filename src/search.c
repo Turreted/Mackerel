@@ -75,8 +75,6 @@ int minmax_dfs(Search *search, Board *board, int depth, int alpha, int beta) {
         // to return value if we are at the top of our search tree
         if (evaluation > alpha && search->depth == depth) {
           //printf("Alpha: %d, Beta: %d\n", alpha, beta);
-          print_move(board, move);
-          printf("\n");
           search->move = *move;
           search->score = evaluation;
         }

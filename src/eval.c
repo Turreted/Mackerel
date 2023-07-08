@@ -7,8 +7,6 @@
 #include "util.h"
 #include "eval.h"
 
-#define INF 2147483646
-
 // evaulation function to determine who is better at which position.
 // Should return negative values for black and positive values for white
 int eval_board(Board *board) {
