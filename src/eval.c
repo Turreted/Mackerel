@@ -126,6 +126,11 @@ int order_moves(Board *board, Search *search, Move *movelist, int move_count) {
 
     int predicted_score = 0;
 
+    // if current position is in our transposition table, add it to the front of the queue
+    if (ttable_get(search->ttable, board)->flags != HASHF_NULL) {
+        predicted_score += 1000;
+    }
+
     // taking a high-value piece with a low-value piece is good
     predicted_score += max(capture_value - piece_value + 10, 0);
 
