@@ -53,7 +53,7 @@ int minmax_dfs(Search *search, Board *board, int depth, int alpha, int beta) {
   }
 
   // check transposition table for the current position, return it if it is returned
-  int lookup_value = lookup_evaluation(search->ttable, board, depth, alpha, beta);
+  int lookup_value = lookup_evaluation(search->ttable, board, depth, -beta, -alpha);
   if (lookup_value != LOOKUP_FAILED)
     return lookup_value;
 
@@ -63,7 +63,7 @@ int minmax_dfs(Search *search, Board *board, int depth, int alpha, int beta) {
       ttable_set(search->ttable, board, -INF, depth, HASHF_EXACT);
       return -INF;
     } else {
-      ttable_set(search->ttable, board, -INF, depth, HASHF_EXACT);
+      ttable_set(search->ttable, board, 0, depth, HASHF_EXACT);
       return 0;
     }
   }
@@ -85,9 +85,17 @@ int minmax_dfs(Search *search, Board *board, int depth, int alpha, int beta) {
 
     // run dfs with the output value flipped, as each player wants the
     // opposite results also flip the alpha and beta parameters, as the
-    // best play and worst plays are flipped
+    // best play and worst plays are flipped (alpha: lower bound, beta: upper bound)
     int evaluation = -minmax_dfs(search, board, depth-1, -beta, -alpha);
     undo_move(board, move, &undo);
+
+    // overwrite alpha value with our best score, write current move
+    // to return value if we are at the top of our search tree
+    if (evaluation > alpha && search->depth == depth) {
+      printf("Found Better Move\n");
+      search->move = *move;
+      search->score = evaluation;
+    }
 
     // previous move was too good, which means that this position will
     // never be reached (https://raphsilva.github.io/utilities/minimax_simulator/
@@ -95,14 +103,6 @@ int minmax_dfs(Search *search, Board *board, int depth, int alpha, int beta) {
       // record lookup for beta value
       ttable_set(search->ttable, board, beta, depth, HASHF_BETA);
       return beta; // *snip*
-    }
-
-    // overwrite alpha value with our best score, write current move
-    // to return value if we are at the top of our search tree
-    if (evaluation > alpha && search->depth == depth) {
-      //printf("Found Better Move");
-      search->move = *move;
-      search->score = evaluation;
     }
 
     // overwrite alpha score if current is better
@@ -120,9 +120,8 @@ int minmax_dfs(Search *search, Board *board, int depth, int alpha, int beta) {
 // search only noisy positions for the best viable position. This makes sure we
 // don't stop our search in a bad position that the evaluator thinks is good
 int quiescence_search(Board *board, int depth, int alpha, int beta) {
-  // probably buggy, might want to return max of alpha and eval_board?
   if (is_checkmate(board)) {
-    return -INF + 1;
+    return -INF;
   }
   if (depth == 0) {
     return alpha;
