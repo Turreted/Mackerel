@@ -6,7 +6,7 @@
 #include "move.h"
 #include "util.h"
 #include "eval.h"
-#include "hmap.h"
+#include "ttable.h"
 #include "search.h"
 
 // evaulation function to determine who is better at which position.

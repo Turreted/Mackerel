@@ -18,7 +18,7 @@ static Search search;
 int run_game(char *fen, int verbose) {
     board_load_fen(&board, fen);
 
-    int depth = 8;
+    int depth = 6;
     search.depth = depth;
 
     // perform search
@@ -31,9 +31,9 @@ int run_game(char *fen, int verbose) {
     double time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
 
     if (verbose) {
-        printf("Found best move %s with score %d\n", move_str, search.score);
-        printf("For Depth %d, checked %d positions in %fs\n", search.depth, search.eval_count, time_spent);
-
+        printf("Found best move %s with score %d\n", move_str, search.score);    
+        printf("For Depth %d, checked %d positions in %fs\n", search.depth, search.eval_count, time_spent);    
+        
         board_print(&board);
         board_print_fen(&board);
         printf("\n");

@@ -14,26 +14,29 @@
 #define HASHF_ALPHA 0x4
 #define HASHF_BETA 0x8
 
+#define LOOKUP_FAILED -1
+
 // Thank you to https://web.archive.org/web/20071031100051/http://www.brucemo.com/compchess/programming/hashing.htm
 
  typedef struct {
     u_int64_t hash;
-    int depth;
+    int depth; // how many ply were searched ahead of eval
     int flags;
     int value;
     Move best;
-} HashNode;
+} TableEntry;
 
 typedef struct {
     int size;
-    HashNode *map;
-} HashMap;
+    TableEntry *map;
+} TTable;
 
-HashMap *hashmap_init(int size);
-void hashmap_print(HashMap *hmap);
-void hashmap_free(HashMap *hmap);
-void hashmap_set(HashMap *hmap, Board *board, int value, int depth);
-HashNode *hashmap_get(HashMap *hmap, Board *board);
+TTable *ttable_init(int size);
+void ttable_print(TTable *ttable);
+void ttable_free(TTable *ttable);
+void ttable_set(TTable *ttable, Board *board, int value, int depth, int hash_flags);
+TableEntry *ttable_get(TTable *ttable, Board *board);
 u_int32_t hash_board(Board *board, int size);
+int lookup_evaluation(TTable *ttable, Board *board, int depth, int alpha, int beta);
 
 #endif
