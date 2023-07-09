@@ -12,21 +12,19 @@
 
 static Board board;
 static Undo undo;
-static Search search;
 
 // TODO: Track move as well in transposition table
 
 int run_game(char *fen, int verbose) {
     board_load_fen(&board, fen);
 
-    int depth = 5;
-    search.depth = depth;
+    Search search;
+    double search_time = 1.0;
 
     // perform search
     clock_t begin = clock();
-    Search search;
     char move_str[8];
-    minmax(&search, &board, depth);
+    minmax(&search, &board, search_time);
     move_to_string(&search.move, move_str);
     clock_t end = clock();
     double time_spent = (double)(end - begin) / CLOCKS_PER_SEC;

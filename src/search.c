@@ -10,16 +10,32 @@
 #include "eval.h"
 #include "util.h"
 
+#include <time.h>
+#include <stdlib.h>
+
 #define Q_DEPTH 5
 #define TTABLE_ENTRIES
 
-int minmax(Search *search, Board *board, int depth) {
-  search->depth = depth;
+int minmax(Search *search, Board *board, double time) {
+  int cur_depth = 1;
+
+  // init search strcut
+  search->depth = cur_depth;
+  search->start_time = clock();
+  search->time_limit = clock() + (time * CLOCKS_PER_SEC);
   search->eval_count = 0;
   search->ttable = ttable_init(65536);
-
+  
   int perspective = board->color == WHITE ? 1 : -1;
-  int res = perspective * minmax_dfs(search, board, depth, -INF, INF);
+  int res = 0;
+
+  // iterative deepening, limit by time not by depth
+  while ((double) (clock() - search->start_time) / CLOCKS_PER_SEC < time) {
+    res = perspective * minmax_dfs(search, board, cur_depth, -INF, INF);
+    cur_depth++;
+    search->depth = cur_depth;
+  }
+  printf("Time elapsed %f\n", (double) (clock() - search->start_time) / CLOCKS_PER_SEC);
 
   //ttable_print(search->ttable);
   ttable_free(search->ttable);
