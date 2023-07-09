@@ -71,8 +71,10 @@ int lookup_evaluation(TTable *ttable, Board *board, int depth, int alpha, int be
   // get entry from board
   TableEntry *tentry = ttable_get(ttable, board);
 
-  // if entry does not exist or is of shallower depth
+  // if entry does not exist or is of shallower depth or there is a 
+  // hash collision the lookup has failed
   if (!tentry->flags || depth > tentry->depth) return LOOKUP_FAILED;
+  if (tentry->hash != board->hash) return LOOKUP_FAILED;
 
   // return the score stored in the transposition table if it is
   // deeper than the current search and has viable AB scores

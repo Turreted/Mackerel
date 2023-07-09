@@ -53,7 +53,6 @@ int minmax_dfs(Search *search, Board *board, int depth, int alpha, int beta) {
   }
 
   // check transposition table for the current position, return it if it is returned
-
   int lookup_value = lookup_evaluation(search->ttable, board, depth, alpha, beta);
   if (lookup_value != LOOKUP_FAILED)
     return lookup_value;
@@ -101,7 +100,7 @@ int minmax_dfs(Search *search, Board *board, int depth, int alpha, int beta) {
     // overwrite alpha value with our best score, write current move
     // to return value if we are at the top of our search tree
     if (evaluation > alpha && search->depth == depth) {
-      printf("Moved!\n");
+      //printf("Found Better Move");
       search->move = *move;
       search->score = evaluation;
     }
