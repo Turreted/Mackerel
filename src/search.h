@@ -12,6 +12,7 @@ typedef struct {
   int eval_count;
   int depth;
   int score;
+  bool finished;
   Move move;
   clock_t start_time;
   clock_t time_limit;

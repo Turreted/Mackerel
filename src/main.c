@@ -19,7 +19,7 @@ int run_game(char *fen, int verbose) {
     board_load_fen(&board, fen);
 
     Search search;
-    double search_time = 10.0;
+    double search_time = 30.0;
 
     // perform search
     clock_t begin = clock();
