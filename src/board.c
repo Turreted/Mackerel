@@ -219,7 +219,7 @@ void board_set(Board *board, int sq, int piece) {
 
 void board_print_fen(Board *board) {
   char* fen = board_to_fen(board);
-  printf("%s \n", fen);
+  printf("%s\n", fen);
   free(fen);
 }
 
@@ -516,7 +516,7 @@ char *board_to_fen(Board *board) {
   char color = board->color == WHITE ? 'w' : 'b';
 
   char* full_fen = (char*) malloc(sizeof(char) * 128);
-  sprintf(full_fen, "%s %c %s - 0 1", fen, color, castle_str);
+  sprintf(full_fen, "%s %c - - 0 1", fen, color);
 
   return full_fen;
 }
