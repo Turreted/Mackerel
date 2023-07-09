@@ -7,7 +7,10 @@
 #include "gen.h"
 #include "eval.h"
 #include "search.h"
+<<<<<<< HEAD
 #include "ttable.h"
+=======
+>>>>>>> d2be9574abe001fd060f05d86512c969530ab988
 #include "util.h"
 
 static Board board;
