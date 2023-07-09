@@ -1,4 +1,4 @@
-#ifndef SEARCH_H
+#ifndef SEARCH_H 
 #define SEARCH_H
 
 #include "board.h"
@@ -6,11 +6,11 @@
 #include "ttable.h"
 
 typedef struct {
-  int eval_count;
-  int depth;
-  int score;
-  Move move;
-  TTable *ttable;
+    int eval_count;
+    int depth;
+    int score;
+    Move move;
+    TTable *ttable;
 } Search;
 
 int minmax(Search *search, Board *board, int depth);

@@ -6,8 +6,8 @@
 #include "search.h"
 
 typedef struct {
-  int score;
-  Move move;
+    int score;
+    Move move;
 } MoveScore;
 
 int eval_board(Board *board);

@@ -7,16 +7,16 @@
 #define MAX_MOVES 256
 
 typedef struct {
-  unsigned char src;
-  unsigned char dst;
-  unsigned char promotion;
+    unsigned char src;
+    unsigned char dst;
+    unsigned char promotion;
 } Move;
 
 typedef struct {
-  unsigned char piece;
-  unsigned char capture;
-  unsigned char castle;
-  bb ep;
+    unsigned char piece;
+    unsigned char capture;
+    unsigned char castle;
+    bb ep;
 } Undo;
 
 void make_move(Board *board, Move *move);

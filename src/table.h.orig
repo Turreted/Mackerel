@@ -12,28 +12,28 @@
 #define TABLE_BETA 3
 
 typedef struct {
-  bb key;
-  int value;
-  unsigned char flag;
-  unsigned char depth;
-  Move move;
+    bb key;
+    int value;
+    unsigned char flag;
+    unsigned char depth;
+    Move move;
 } Entry;
 
 typedef struct {
-  int size;
-  int mask;
-  Entry *data;
+    int size;
+    int mask;
+    Entry *data;
 } Table;
 
 typedef struct {
-  bb key;
-  int value;
+    bb key;
+    int value;
 } PawnEntry;
 
 typedef struct {
-  int size;
-  int mask;
-  PawnEntry *data;
+    int size;
+    int mask;
+    PawnEntry *data;
 } PawnTable;
 
 void table_alloc(Table *table, int bits);

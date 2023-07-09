@@ -53,7 +53,7 @@ int minmax_dfs(Search *search, Board *board, int depth, int alpha, int beta) {
   }
 
   // check transposition table for the current position, return it if it is returned
-
+  
   int lookup_value = lookup_evaluation(search->ttable, board, depth, alpha, beta);
   if (lookup_value != LOOKUP_FAILED)
     return lookup_value;
