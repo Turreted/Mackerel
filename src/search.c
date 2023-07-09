@@ -35,7 +35,7 @@ int minmax(Search *search, Board *board, double time) {
     cur_depth++;
     search->depth = cur_depth;
   }
-  printf("Time elapsed %f\n", (double) (clock() - search->start_time) / CLOCKS_PER_SEC);
+  //printf("Time elapsed %f\n", (double) (clock() - search->start_time) / CLOCKS_PER_SEC);
 
   //ttable_print(search->ttable);
   ttable_free(search->ttable);
@@ -108,7 +108,7 @@ int minmax_dfs(Search *search, Board *board, int depth, int alpha, int beta) {
     // overwrite alpha value with our best score, write current move
     // to return value if we are at the top of our search tree
     if (evaluation > alpha && search->depth == depth) {
-      printf("Found Better Move\n");
+      //printf("Found Better Move\n");
       search->move = *move;
       search->score = evaluation;
     }
