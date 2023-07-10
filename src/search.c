@@ -14,7 +14,7 @@
 #include <stdlib.h>
 
 #define Q_DEPTH 5
-#define TTABLE_ENTRIES 65536
+#define TTABLE_ENTRIES 1048576
 
 int minmax(Search *search, Board *board, double time) {
   int cur_depth = 1;
@@ -65,10 +65,16 @@ int minmax(Search *search, Board *board, double time) {
 */
 int minmax_dfs(Search *search, Board *board, int depth, int alpha, int beta) {
 
-  if (clock() > search->time_limit) {
+  // kill search if our time limit is reached
+  if (search->finished || clock() > search->time_limit) {
     search->finished = true;
     return beta;
   }
+
+  // check transposition table for the current position, return it if it is returned
+  int lookup_value = lookup_evaluation(search->ttable, board, depth, -beta, -alpha);
+  if (lookup_value != LOOKUP_FAILED)
+    return lookup_value;
 
   search->eval_count++;
   Move moves[MAX_MOVES];
@@ -86,10 +92,6 @@ int minmax_dfs(Search *search, Board *board, int depth, int alpha, int beta) {
     exit(1);
   }
 
-  // check transposition table for the current position, return it if it is returned
-  int lookup_value = lookup_evaluation(search->ttable, board, depth, -beta, -alpha);
-  if (lookup_value != LOOKUP_FAILED)
-    return lookup_value;
 
   // check if checkmate or stalemate
   if (move_count == 0) {
@@ -125,15 +127,18 @@ int minmax_dfs(Search *search, Board *board, int depth, int alpha, int beta) {
 
     // overwrite alpha value with our best score, write current move
     // to return value if we are at the top of our search tree
-    if (evaluation > alpha && search->depth == depth) {
-      //printf("Found Better Move\n");
-      if (!search->finished) {
+    if (evaluation > alpha && search->depth == depth && !search->finished) {
         printf("Move Found: ");
         print_move(board, move);
         printf("\n");
         search->move = *move;
         search->score = evaluation;
-      }
+
+        // if we've found a checkmate, terminate our search
+        if (search->score == INF) {
+          printf("Checkmate Found!\n");
+          search->finished = true;
+        }
     }
 
     // previous move was too good, which means that this position will
